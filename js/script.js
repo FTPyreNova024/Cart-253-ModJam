@@ -100,14 +100,9 @@ function moveBug() {
 /**draws either of the bugs**/
 
 function drawBug() {
-    // Draw multiple bugs with a higher chance of fireflies
-    for (let i = 0; i < 5; i++) {
-        if (random() < 0.7) {
-            drawFirefly();
-        } else {
-            drawFly();
-        }
-    }
+
+    drawFirefly();
+    drawFly();
 }
 
 /**
@@ -153,7 +148,12 @@ function resetFirefly() {
  * Moves the frog to the mouse position on x
  */
 function moveFrog() {
-    frog.body.x = mouseX;
+    if (keyIsDown(65)) { // 'A' key
+        frog.body.x -= 10;
+    }
+    if (keyIsDown(68)) { // 'D' key
+        frog.body.x += 10;
+    }
 }
 
 /**
@@ -254,8 +254,8 @@ function drawScore() {
 /**
  * Launch the tongue on click (if it's not launched yet)
  */
-function mousePressed() {
-    if (frog.tongue.state === "idle") {
+function keyPressed() {
+    if (key === 'w' && frog.tongue.state === "idle") {
         frog.tongue.state = "outbound";
     }
 }
