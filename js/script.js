@@ -15,6 +15,9 @@
 
 "use strict";
 
+// CountDown Timer
+let timer = 90; // 90 seconds
+
 //Title screen
 let gameState = "title";
 
@@ -88,6 +91,13 @@ function setup() {
     // Give the fly its first random position
     resetFly();
 
+    // One minute and a half timer
+    setInterval(() => {
+        if (gameState === "game") {
+            decrementTimer();
+        }
+    }, 1000);
+
 }
 
 /**
@@ -103,17 +113,31 @@ function draw() {
         //Basic instructions of the game
         drawInstructions();
 
+    } else if (gameState === "scores") {
+        //Display the scoreboard
+        drawScoreBoard();
     } else if (gameState === "game") {
-
-        background("#87ceeb");
-        moveBug();
-        drawBug();
-        moveFrog();
-        moveTongue();
-        drawFrog();
-        tongueOverlap();
-        drawScore();
+        //Game screen
+        drawGameScreen();
     }
+}
+//Game screen
+function drawGameScreen() {
+    background("#87ceeb");
+    push();
+    fill(0, 0, 0);
+    textSize(20);
+    text("Press ESCAPE to go back and pause", 320, 50);
+    pop();
+
+    moveBug();
+    drawBug();
+    moveFrog();
+    moveTongue();
+    drawFrog();
+    tongueOverlap();
+    drawScore();
+    drawTimer();
 }
 
 //Title screen
@@ -126,6 +150,8 @@ function drawTitleScreen() {
     text("Frogfrogfrog", width / 2, height / 2 - 100);
     textSize(30);
     text("Press ENTER to Start", width / 2, height / 2);
+    textSize(30);
+    text("Press SHIFT to see the scores", width / 2, height / 2 + 100);
     pop();
 }
 
@@ -448,7 +474,7 @@ function checkTongueMosquitoOverlap() {
         frog.tongue.state = "inbound";
         // Increase the score
         let incrementInterval = setInterval(() => {
-            score--;
+            score++;
         }, 700);
 
         setTimeout(() => {
@@ -457,11 +483,66 @@ function checkTongueMosquitoOverlap() {
     }
 }
 
+// draws the scoreboad on the top left corner
 function drawScore() {
     push();
     fill("#000000");
     textSize(40);
     text("POINTS: " + score, 30, 70);
+    pop();
+}
+
+//CountDown Timer
+function decrementTimer() {
+    if (timer > 0) {
+        timer--;
+    } else {
+        saveScore();
+        gameState = "scores";
+        timer = 90;
+        score = 0;
+    }
+}
+
+//draws the timer on the top right corner
+function drawTimer() {
+    push();
+    fill("#000000");
+    textSize(40);
+    text("TIME LEFT: " + timer, 700, 70);
+    pop();
+}
+
+/**
+ * Saves the score to local storage
+ */
+function saveScore() {
+    let scores = JSON.parse(localStorage.getItem('scores')) || [];
+    scores.push(score);
+    localStorage.setItem('scores', JSON.stringify(scores));
+}
+
+// Save the score when the timer reaches 0
+if (timer === 0) {
+    saveScore();
+}
+
+//draw the scores
+function drawScoreBoard() {
+    push();
+    background(0, 255, 200);
+    textAlign(CENTER, CENTER);
+    textSize(20);
+    fill("#000000");
+    text("Press ESCAPE to go back", width / 2, height / 2 + 200);
+    textSize(50);
+    text("Scores", width / 2, height / 2 - 200);
+    textSize(30);
+    let scores = JSON.parse(localStorage.getItem('scores')) || [];
+    scores.sort((a, b) => b - a); // Sort scores in descending order
+    for (let i = 0; i < Math.min(scores.length, 10); i++) {
+        text(`${i + 1}. ${scores[i]}`, width / 2, height / 2 - 100 + i * 40);
+    }
     pop();
 }
 
@@ -476,6 +557,12 @@ function keyPressed() {
     } else if (keyCode === ENTER && gameState === "instructions") {
         gameState = "game";
     } else if (keyCode === ESCAPE && gameState === "game") {
+        gameState = "title";
+    }
+
+    if (keyCode === SHIFT && gameState === "title") {
+        gameState = "scores";
+    } else if (keyCode === ESCAPE && gameState === "scores") {
         gameState = "title";
     }
 
