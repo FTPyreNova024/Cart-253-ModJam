@@ -37,7 +37,7 @@ const frog = {
     }
 };
 
-// Our flies
+// Our bugs
 // Has a position, size, and speed of horizontal movement
 const fly = {
     x: 0,
@@ -51,7 +51,7 @@ const firefly = {
     y: 200, // Will be random
     size: 20,
     speed: 2,
-    color: [255, 0, 0]
+    color: [255, 200, 0]
 };
 
 /**
@@ -60,7 +60,7 @@ const firefly = {
 function setup() {
     createCanvas(1000, 1000);
 
-    // Give the fly its first random position
+    // Give the fly and firefly its first random position
     resetFirefly();
     resetFly();
 }
@@ -100,8 +100,14 @@ function moveBug() {
 /**draws either of the bugs**/
 
 function drawBug() {
-    drawFly();
-    drawFirefly();
+    // Draw multiple bugs with a higher chance of fireflies
+    for (let i = 0; i < 5; i++) {
+        if (random() < 0.7) {
+            drawFirefly();
+        } else {
+            drawFly();
+        }
+    }
 }
 
 /**
