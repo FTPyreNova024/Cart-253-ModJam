@@ -44,7 +44,7 @@ const frog = {
 };
 
 // Our bugs
-// Has a position, size, and speed of horizontal movement
+// Have a position, size, and speed of horizontal movement
 const fly = {
     x: 0,
     y: 200, // Will be random
@@ -152,7 +152,6 @@ function drawGameScreen() {
 }
 
 //Title screen
-
 function drawTitleScreen() {
     push();
     background(25, 120, 11);
@@ -168,7 +167,6 @@ function drawTitleScreen() {
 }
 
 //Scoreboard screen
-//draw the scores
 function drawScoreBoard() {
     push();
     background(25, 120, 11);
@@ -192,7 +190,6 @@ function drawScoreBoard() {
 }
 
 //Instructions screen
-
 function drawInstructions() {
     push();
     background(25, 120, 11);
@@ -208,6 +205,7 @@ function drawInstructions() {
     pop();
 }
 
+//Types of bugs screen
 function drawTypesOfFlies() {
     push();
     background(25, 120, 11);
@@ -270,8 +268,8 @@ function drawTypesOfFlies() {
     pop();
 }
 /**
- * Moves the fly according to its speed
- * Resets the fly if it gets all the way to the right
+ * Moves the bugs according to its speed
+ * Resets the bugs if it gets all the way to the right or left
  */
 function moveBug() {
     // Move the fly
@@ -334,7 +332,6 @@ function tongueOverlap() {
 }
 
 /**draws either of the bugs**/
-
 function drawBug() {
 
     drawFirefly();
@@ -401,7 +398,7 @@ function drawIllFly() {
 }
 
 /**
- * Resets the bug to the left with a random y and chooses between a regular fly and a firefly
+ * Resets the bug to the left or right with a random y position
  */
 function resetFly() {
     // Spawn a regular fly
@@ -453,7 +450,7 @@ function resetIllFly() {
 }
 
 /**
- * Moves the frog to the mouse position on x
+ * Moves the frog with "A" and "D" on the x position
  */
 function moveFrog() {
     if (keyIsDown(65)) { // 'A' key
@@ -519,7 +516,7 @@ function drawFrog() {
 }
 
 /**
- * Handles the tongue overlapping the fly
+ * Handles the tongue overlapping the bugs
  */
 function checkTongueFlyOverlap() {
     // Get distance from tongue to fly
@@ -668,7 +665,7 @@ if (timer === 0) {
 }
 
 /**
- * Launch the tongue on click (if it's not launched yet)
+ * handles the diferent key presses and screens, plus the tongue actions
  */
 function keyPressed() {
     if (key === 'w' && frog.tongue.state === "idle" && gameState === "game") {
