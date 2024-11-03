@@ -45,16 +45,38 @@ const frog = {
 const fly = {
     x: 0,
     y: 200, // Will be random
-    size: 10,
+    size: 30,
     speed: 3
+};
+
+const spiceyFly = {
+    x: 0,
+    y: 200, // Will be random
+    size: 15,
+    speed: 10
+};
+
+const mosquito = {
+    x: 1000,
+    y: 200, // Will be random
+    size: 10,
+    speed: 7,
+    color: [143, 98, 53]
 };
 
 const firefly = {
     x: 0,
     y: 200, // Will be random
     size: 20,
-    speed: 2,
+    speed: 4,
     color: [255, 200, 0]
+};
+
+const toxicFly = {
+    x: 1000,
+    y: 200, // Will be random
+    size: 25,
+    speed: 1
 };
 
 /**
@@ -63,9 +85,9 @@ const firefly = {
 function setup() {
     createCanvas(1000, 1000);
 
-    // Give the fly and firefly its first random position
-    resetFirefly();
+    // Give the fly its first random position
     resetFly();
+
 }
 
 /**
@@ -89,8 +111,7 @@ function draw() {
         moveFrog();
         moveTongue();
         drawFrog();
-        checkTongueFlyOverlap();
-        checkTongueFireflyOverlap();
+        tongueOverlap();
         drawScore();
     }
 }
@@ -130,6 +151,7 @@ function drawInstructions() {
  */
 function moveBug() {
     // Move the fly
+    fly.y += random(-5, 5);
     fly.x += fly.speed;
     // Handle the fly going off the canvas
     if (fly.x > width) {
@@ -137,11 +159,45 @@ function moveBug() {
     }
 
     // Move the firefly
+    firefly.y += random(-2, 2);
     firefly.x += firefly.speed;
     // Handle the firefly going off the canvas
     if (firefly.x > width) {
         resetFirefly();
     }
+
+    // Move the spicey fly
+    spiceyFly.y += random(-10, 10);
+    spiceyFly.x += spiceyFly.speed;
+    // Handle the spicey fly going off the canvas
+    if (spiceyFly.x > width) {
+        resetSpiceyFly();
+    }
+
+    // Move the toxic fly
+    toxicFly.y += random(-1, 1);
+    toxicFly.x -= toxicFly.speed;
+    // Handle the toxic fly going off the canvas
+    if (toxicFly.x < 0) {
+        resetToxicFly();
+    }
+
+    // Move the mosquito
+    mosquito.y += random(-7, 7);
+    mosquito.x -= mosquito.speed;
+    // Handle the mosquito going off the canvas
+    if (mosquito.x < 0) {
+        resetMosquito();
+    }
+}
+
+/**Check if the bugs are caught by the tongue */
+function tongueOverlap() {
+    checkTongueFlyOverlap();
+    checkTongueFireflyOverlap();
+    checkTongueSpiceyFlyOverlap();
+    checkTongueToxicFlyOverlap();
+    checkTongueMosquitoOverlap();
 }
 
 /**draws either of the bugs**/
@@ -150,6 +206,9 @@ function drawBug() {
 
     drawFirefly();
     drawFly();
+    drawSpiceyFly();
+    drawToxicFly();
+    drawMosquito();
 }
 
 /**
@@ -162,12 +221,39 @@ function drawFly() {
     ellipse(fly.x, fly.y, fly.size);
     pop();
 }
-//Draws the firefly as a red circle
+//Draws the firefly as a yellow circle
 function drawFirefly() {
     push();
     noStroke();
     fill(firefly.color);
     ellipse(firefly.x, firefly.y, firefly.size);
+    pop();
+}
+
+//Draws the spicey fly as a red circle
+function drawSpiceyFly() {
+    push();
+    noStroke();
+    fill("#ff0000");
+    ellipse(spiceyFly.x, spiceyFly.y, spiceyFly.size);
+    pop();
+}
+
+//Draws the toxic fly as a green circle
+function drawToxicFly() {
+    push();
+    noStroke();
+    fill(50, 250, 200);
+    ellipse(toxicFly.x, toxicFly.y, toxicFly.size);
+    pop();
+}
+
+//Draws the mosquito as a brown circle
+function drawMosquito() {
+    push();
+    noStroke();
+    fill(mosquito.color);
+    ellipse(mosquito.x, mosquito.y, mosquito.size);
     pop();
 }
 
@@ -178,7 +264,7 @@ function resetFly() {
     // Spawn a regular fly
     fly.x = 0;
     fly.y = random(100, 800);
-    fly.size = 10;
+    fly.size = 30;
     fly.speed = 3;
 
 }
@@ -188,7 +274,31 @@ function resetFirefly() {
     firefly.x = 0;
     firefly.y = random(100, 800);
     firefly.size = 20;
-    firefly.speed = 2;
+    firefly.speed = 4;
+}
+
+function resetSpiceyFly() {
+    // Spawn a spicey fly
+    spiceyFly.x = 0;
+    spiceyFly.y = random(100, 800);
+    spiceyFly.size = 15;
+    spiceyFly.speed = 10;
+}
+
+function resetToxicFly() {
+    // Spawn a toxic fly
+    toxicFly.x = 1000;
+    toxicFly.y = random(100, 800);
+    toxicFly.size = 25;
+    toxicFly.speed = 1;
+}
+
+function resetMosquito() {
+    // Spawn a mosquito
+    mosquito.x = 1000;
+    mosquito.y = random(100, 800);
+    mosquito.size = 10;
+    mosquito.speed = 7;
 }
 
 /**
@@ -290,11 +400,68 @@ function checkTongueFireflyOverlap() {
     }
 }
 
+function checkTongueSpiceyFlyOverlap() {
+    // Get distance from tongue to spicey fly
+    const d = dist(frog.tongue.x, frog.tongue.y, spiceyFly.x, spiceyFly.y);
+    // Check if it's an overlap
+    const eaten = (d < frog.tongue.size / 2 + spiceyFly.size / 2);
+    if (eaten) {
+        // Reset the spicey fly
+        resetSpiceyFly();
+        // Bring back the tongue
+        frog.tongue.state = "inbound";
+        // Increment the score
+        score += 4;
+    }
+}
+
+function checkTongueToxicFlyOverlap() {
+    // Get distance from tongue to toxic fly
+    const d = dist(frog.tongue.x, frog.tongue.y, toxicFly.x, toxicFly.y);
+    // Check if it's an overlap
+    const eaten = (d < frog.tongue.size / 2 + toxicFly.size / 2);
+    if (eaten) {
+        // Reset the toxic fly
+        resetToxicFly();
+        // Bring back the tongue
+        frog.tongue.state = "inbound";
+        // Decrease the score through time
+        let decrementInterval = setInterval(() => {
+            score--;
+        }, 700);
+
+        setTimeout(() => {
+            clearInterval(decrementInterval);
+        }, 7000);
+    }
+}
+
+function checkTongueMosquitoOverlap() {
+    // Get distance from tongue to mosquito
+    const d = dist(frog.tongue.x, frog.tongue.y, mosquito.x, mosquito.y);
+    // Check if it's an overlap
+    const eaten = (d < frog.tongue.size / 2 + mosquito.size / 2);
+    if (eaten) {
+        // Reset the mosquito
+        resetMosquito();
+        // Bring back the tongue
+        frog.tongue.state = "inbound";
+        // Increase the score
+        let incrementInterval = setInterval(() => {
+            score--;
+        }, 700);
+
+        setTimeout(() => {
+            clearInterval(incrementInterval);
+        }, 7000);
+    }
+}
+
 function drawScore() {
     push();
     fill("#000000");
     textSize(40);
-    text("FLIES CAUGHT: " + score, 30, 70);
+    text("POINTS: " + score, 30, 70);
     pop();
 }
 
