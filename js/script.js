@@ -15,6 +15,9 @@
 
 "use strict";
 
+//Title screen
+let gameState = "title";
+
 //Scoreboard
 let score = 0;
 
@@ -65,18 +68,62 @@ function setup() {
     resetFly();
 }
 
+/**
+ * Draws the game and title screen
+ */
 function draw() {
-    background("#87ceeb");
-    moveBug();
-    drawBug();
-    moveFrog();
-    moveTongue();
-    drawFrog();
-    checkTongueFlyOverlap();
-    checkTongueFireflyOverlap();
-    drawScore();
+    if (gameState === "title") {
+        //Title screen
+        background(0, 250, 200);
+        drawTitleScreen();
+
+    } else if (gameState === "instructions") {
+        //Basic instructions of the game
+        drawInstructions();
+
+    } else if (gameState === "game") {
+
+        background("#87ceeb");
+        moveBug();
+        drawBug();
+        moveFrog();
+        moveTongue();
+        drawFrog();
+        checkTongueFlyOverlap();
+        checkTongueFireflyOverlap();
+        drawScore();
+    }
 }
 
+//Title screen
+
+function drawTitleScreen() {
+    push();
+    textAlign(CENTER, CENTER);
+    textSize(50);
+    fill("#000000");
+    text("Frogfrogfrog", width / 2, height / 2 - 100);
+    textSize(30);
+    text("Press ENTER to Start", width / 2, height / 2);
+    pop();
+}
+
+//Instructions screen
+
+function drawInstructions() {
+    push();
+    background(0, 255, 200);
+    textAlign(CENTER, CENTER);
+    textSize(50);
+    fill("#000000");
+    text("Instructions", width / 2, height / 2 - 200);
+    textSize(30);
+    text("Move the frog with 'A' and 'D'", width / 2, height / 2 - 100);
+    text("Catch the flies with your tongue by using 'W'", width / 2, height / 2 - 50);
+    text("Only catch the black flies", width / 2, height / 2);
+    text("Press ENTER to play", width / 2, height / 2 + 50);
+    pop();
+}
 /**
  * Moves the fly according to its speed
  * Resets the fly if it gets all the way to the right
@@ -255,7 +302,14 @@ function drawScore() {
  * Launch the tongue on click (if it's not launched yet)
  */
 function keyPressed() {
-    if (key === 'w' && frog.tongue.state === "idle") {
+    if (key === 'w' && frog.tongue.state === "idle" && gameState === "game") {
         frog.tongue.state = "outbound";
+    } else if (keyCode === ENTER && gameState === "title") {
+        gameState = "instructions";
+    } else if (keyCode === ENTER && gameState === "instructions") {
+        gameState = "game";
+    } else if (keyCode === ESCAPE && gameState === "game") {
+        gameState = "title";
     }
+
 }
