@@ -37,13 +37,21 @@ const frog = {
     }
 };
 
-// Our fly
+// Our flies
 // Has a position, size, and speed of horizontal movement
 const fly = {
     x: 0,
     y: 200, // Will be random
     size: 10,
     speed: 3
+};
+
+const firefly = {
+    x: 0,
+    y: 200, // Will be random
+    size: 20,
+    speed: 2,
+    color: [255, 0, 0]
 };
 
 /**
@@ -53,17 +61,19 @@ function setup() {
     createCanvas(1000, 1000);
 
     // Give the fly its first random position
+    resetFirefly();
     resetFly();
 }
 
 function draw() {
     background("#87ceeb");
-    moveFly();
-    drawFly();
+    moveBug();
+    drawBug();
     moveFrog();
     moveTongue();
     drawFrog();
     checkTongueFlyOverlap();
+    checkTongueFireflyOverlap();
     drawScore();
 }
 
@@ -71,13 +81,27 @@ function draw() {
  * Moves the fly according to its speed
  * Resets the fly if it gets all the way to the right
  */
-function moveFly() {
+function moveBug() {
     // Move the fly
     fly.x += fly.speed;
     // Handle the fly going off the canvas
     if (fly.x > width) {
         resetFly();
     }
+
+    // Move the firefly
+    firefly.x += firefly.speed;
+    // Handle the firefly going off the canvas
+    if (firefly.x > width) {
+        resetFirefly();
+    }
+}
+
+/**draws either of the bugs**/
+
+function drawBug() {
+    drawFly();
+    drawFirefly();
 }
 
 /**
@@ -90,13 +114,33 @@ function drawFly() {
     ellipse(fly.x, fly.y, fly.size);
     pop();
 }
+//Draws the firefly as a red circle
+function drawFirefly() {
+    push();
+    noStroke();
+    fill(firefly.color);
+    ellipse(firefly.x, firefly.y, firefly.size);
+    pop();
+}
 
 /**
- * Resets the fly to the left with a random y
+ * Resets the bug to the left with a random y and chooses between a regular fly and a firefly
  */
 function resetFly() {
+    // Spawn a regular fly
     fly.x = 0;
     fly.y = random(100, 800);
+    fly.size = 10;
+    fly.speed = 3;
+
+}
+
+function resetFirefly() {
+    // Spawn a firefly
+    firefly.x = 0;
+    firefly.y = random(100, 800);
+    firefly.size = 20;
+    firefly.speed = 2;
 }
 
 /**
@@ -175,6 +219,21 @@ function checkTongueFlyOverlap() {
         frog.tongue.state = "inbound";
         // Increment the score
         score++;
+    }
+}
+
+function checkTongueFireflyOverlap() {
+    // Get distance from tongue to firefly
+    const d = dist(frog.tongue.x, frog.tongue.y, firefly.x, firefly.y);
+    // Check if it's an overlap
+    const eaten = (d < frog.tongue.size / 2 + firefly.size / 2);
+    if (eaten) {
+        // Reset the firefly
+        resetFirefly();
+        // Bring back the tongue
+        frog.tongue.state = "inbound";
+        // Decrease the score
+        score--;
     }
 }
 
