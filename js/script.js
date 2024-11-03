@@ -15,19 +15,22 @@
 
 "use strict";
 
+//Scoreboard
+let score = 0;
+
 // Our frog
 const frog = {
     // The frog's body has a position and size
     body: {
-        x: 320,
-        y: 520,
-        size: 150
+        x: 500,
+        y: 1000,
+        size: 300
     },
     // The frog's tongue has a position, size, speed, and state
     tongue: {
         x: undefined,
-        y: 480,
-        size: 20,
+        y: 1000,
+        size: 40,
         speed: 20,
         // Determines how the tongue moves each frame
         state: "idle" // State can be: idle, outbound, inbound
@@ -47,7 +50,7 @@ const fly = {
  * Creates the canvas and initializes the fly
  */
 function setup() {
-    createCanvas(640, 480);
+    createCanvas(1000, 1000);
 
     // Give the fly its first random position
     resetFly();
@@ -61,6 +64,7 @@ function draw() {
     moveTongue();
     drawFrog();
     checkTongueFlyOverlap();
+    drawScore();
 }
 
 /**
@@ -92,7 +96,7 @@ function drawFly() {
  */
 function resetFly() {
     fly.x = 0;
-    fly.y = random(0, 300);
+    fly.y = random(100, 800);
 }
 
 /**
@@ -169,7 +173,17 @@ function checkTongueFlyOverlap() {
         resetFly();
         // Bring back the tongue
         frog.tongue.state = "inbound";
+        // Increment the score
+        score++;
     }
+}
+
+function drawScore() {
+    push();
+    fill("#000000");
+    textSize(40);
+    text("FLIES CAUGHT: " + score, 30, 70);
+    pop();
 }
 
 /**
