@@ -82,6 +82,13 @@ const toxicFly = {
     speed: 1
 };
 
+const illFly = {
+    x: 1000,
+    y: 200, // Will be random
+    size: 20,
+    speed: 4
+};
+
 /**
  * Creates the canvas and initializes the fly
  */
@@ -106,16 +113,20 @@ function setup() {
 function draw() {
     if (gameState === "title") {
         //Title screen
-        background(0, 250, 200);
         drawTitleScreen();
 
     } else if (gameState === "instructions") {
         //Basic instructions of the game
         drawInstructions();
 
+    } else if (gameState === "flies") {
+        //Display types of flies
+        drawTypesOfFlies();
+
     } else if (gameState === "scores") {
         //Display the scoreboard
         drawScoreBoard();
+
     } else if (gameState === "game") {
         //Game screen
         drawGameScreen();
@@ -144,6 +155,7 @@ function drawGameScreen() {
 
 function drawTitleScreen() {
     push();
+    background(25, 120, 11);
     textAlign(CENTER, CENTER);
     textSize(50);
     fill("#000000");
@@ -159,7 +171,7 @@ function drawTitleScreen() {
 //draw the scores
 function drawScoreBoard() {
     push();
-    background(0, 255, 200);
+    background(25, 120, 11);
     textAlign(CENTER, CENTER);
     textSize(20);
     fill("#000000");
@@ -183,7 +195,7 @@ function drawScoreBoard() {
 
 function drawInstructions() {
     push();
-    background(0, 255, 200);
+    background(25, 120, 11);
     textAlign(CENTER, CENTER);
     textSize(50);
     fill("#000000");
@@ -191,7 +203,70 @@ function drawInstructions() {
     textSize(30);
     text("Move the frog with 'A' and 'D'", width / 2, height / 2 - 100);
     text("Catch the flies with your tongue by using 'W'", width / 2, height / 2 - 50);
-    text("Press ENTER to play", width / 2, height / 2 + 50);
+    text("Press ENTER to continue", width / 2, height / 2 + 50);
+    text("Press ESCAPE to go back", width / 2, height / 2 + 100);
+    pop();
+}
+
+function drawTypesOfFlies() {
+    push();
+    background(25, 120, 11);
+    textAlign(CENTER, CENTER);
+    textSize(50);
+    fill("#000000");
+    text("Types of Flies", width / 2, height / 2 - 200);
+    textSize(30);
+
+    // Regular Fly
+    text("Regular Fly: 1 point", width / 2, height / 2 - 100);
+    push();
+    noStroke();
+    fill("#000000");
+    ellipse(width / 2 - 150, height / 2 - 100, 30);
+    pop();
+
+    // Firefly
+    text("Firefly: -1 point", width / 2, height / 2 - 50);
+    push();
+    noStroke();
+    fill(firefly.color);
+    ellipse(width / 2 - 120, height / 2 - 50, 20);
+    pop();
+
+    // Spicey Fly
+    text("Spicey Fly: 4 points", width / 2, height / 2);
+    push();
+    noStroke();
+    fill("#ff0000");
+    ellipse(width / 2 - 150, height / 2, 15);
+    pop();
+
+    // Ill Fly
+    text("Ill Fly: -4 points", width / 2, height / 2 + 50);
+    push();
+    noStroke();
+    fill("#0000ff");
+    ellipse(width / 2 - 130, height / 2 + 50, 20);
+    pop();
+
+    // Toxic Fly
+    text("Toxic Fly: -1 point every 0.7 seconds", width / 2, height / 2 + 100);
+    push();
+    noStroke();
+    fill(119, 255, 0);
+    ellipse(width / 2 - 260, height / 2 + 100, 25);
+    pop();
+
+    // Mosquito
+    text("Mosquito: +1 point every 0.7 seconds", width / 2, height / 2 + 150);
+    push();
+    noStroke();
+    fill(mosquito.color);
+    ellipse(width / 2 - 270, height / 2 + 150, 10);
+    pop();
+
+    text("Press ENTER to start the game", width / 2, height / 2 + 200);
+    text("Press ESCAPE to go back", width / 2, height / 2 + 250);
     pop();
 }
 /**
@@ -238,6 +313,14 @@ function moveBug() {
     if (mosquito.x < 0) {
         resetMosquito();
     }
+
+    // Move the illFly
+    illFly.y += random(-2, 2);
+    illFly.x -= illFly.speed;
+    // Handle the illFly going off the canvas
+    if (illFly.x < 0) {
+        resetIllFly();
+    }
 }
 
 /**Check if the bugs are caught by the tongue */
@@ -247,6 +330,7 @@ function tongueOverlap() {
     checkTongueSpiceyFlyOverlap();
     checkTongueToxicFlyOverlap();
     checkTongueMosquitoOverlap();
+    checkTongueIllFlyOverlap();
 }
 
 /**draws either of the bugs**/
@@ -258,6 +342,7 @@ function drawBug() {
     drawSpiceyFly();
     drawToxicFly();
     drawMosquito();
+    drawIllFly();
 }
 
 /**
@@ -292,7 +377,7 @@ function drawSpiceyFly() {
 function drawToxicFly() {
     push();
     noStroke();
-    fill(50, 250, 200);
+    fill(119, 255, 0);
     ellipse(toxicFly.x, toxicFly.y, toxicFly.size);
     pop();
 }
@@ -303,6 +388,15 @@ function drawMosquito() {
     noStroke();
     fill(mosquito.color);
     ellipse(mosquito.x, mosquito.y, mosquito.size);
+    pop();
+}
+
+//draws the illFly as a blue circle
+function drawIllFly() {
+    push();
+    noStroke();
+    fill("#0000ff");
+    ellipse(illFly.x, illFly.y, illFly.size);
     pop();
 }
 
@@ -348,6 +442,14 @@ function resetMosquito() {
     mosquito.y = random(100, 800);
     mosquito.size = 10;
     mosquito.speed = 7;
+}
+
+function resetIllFly() {
+    // Spawn a illFly
+    illFly.x = 1000;
+    illFly.y = random(100, 800);
+    illFly.size = 20;
+    illFly.speed = 4;
 }
 
 /**
@@ -506,6 +608,21 @@ function checkTongueMosquitoOverlap() {
     }
 }
 
+function checkTongueIllFlyOverlap() {
+    // Get distance from tongue to illFly
+    const d = dist(frog.tongue.x, frog.tongue.y, illFly.x, illFly.y);
+    // Check if it's an overlap
+    const eaten = (d < frog.tongue.size / 2 + illFly.size / 2);
+    if (eaten) {
+        // Reset the illFly
+        resetIllFly();
+        // Bring back the tongue
+        frog.tongue.state = "inbound";
+        // Decrease the score
+        score -= 4;
+    }
+}
+
 // draws the scoreboad on the top left corner
 function drawScore() {
     push();
@@ -559,6 +676,8 @@ function keyPressed() {
     } else if (keyCode === ENTER && gameState === "title") {
         gameState = "instructions";
     } else if (keyCode === ENTER && gameState === "instructions") {
+        gameState = "flies";
+    } else if (keyCode === ENTER && gameState === "flies") {
         gameState = "game";
     } else if (keyCode === ESCAPE && gameState === "game") {
         gameState = "title";
@@ -568,6 +687,10 @@ function keyPressed() {
         gameState = "scores";
     } else if (keyCode === ESCAPE && gameState === "scores") {
         gameState = "title";
+    } else if (keyCode === ESCAPE && gameState === "instructions") {
+        gameState = "title";
+    } else if (keyCode === ESCAPE && gameState === "flies") {
+        gameState = "instructions";
     }
 
 }
