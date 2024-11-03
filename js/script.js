@@ -155,6 +155,30 @@ function drawTitleScreen() {
     pop();
 }
 
+//Scoreboard screen
+//draw the scores
+function drawScoreBoard() {
+    push();
+    background(0, 255, 200);
+    textAlign(CENTER, CENTER);
+    textSize(20);
+    fill("#000000");
+    text("Press ESCAPE to go back", width / 2, 200);
+    textSize(50);
+    text("Scores", width / 2, height / 2 - 200);
+    textSize(30);
+    let scores = JSON.parse(localStorage.getItem('scores')) || [];
+    let latestScore = scores[scores.length - 1]; // Get the latest score
+    scores.sort((a, b) => b - a); // Sort scores in descending order
+    for (let i = 0; i < Math.min(scores.length, 10); i++) {
+        if (scores[i] === latestScore) {
+            text("latest", width / 2 - 100, height / 2 - 100 + i * 40); // Display "latest" before the score
+        }
+        text(`${i + 1}. ${scores[i]}`, width / 2, height / 2 - 100 + i * 40);
+    }
+    pop();
+}
+
 //Instructions screen
 
 function drawInstructions() {
@@ -167,7 +191,6 @@ function drawInstructions() {
     textSize(30);
     text("Move the frog with 'A' and 'D'", width / 2, height / 2 - 100);
     text("Catch the flies with your tongue by using 'W'", width / 2, height / 2 - 50);
-    text("Only catch the black flies", width / 2, height / 2);
     text("Press ENTER to play", width / 2, height / 2 + 50);
     pop();
 }
@@ -332,10 +355,10 @@ function resetMosquito() {
  */
 function moveFrog() {
     if (keyIsDown(65)) { // 'A' key
-        frog.body.x -= 10;
+        frog.body.x = max(frog.body.x - 10, 0);
     }
     if (keyIsDown(68)) { // 'D' key
-        frog.body.x += 10;
+        frog.body.x = min(frog.body.x + 10, width);
     }
 }
 
@@ -525,25 +548,6 @@ function saveScore() {
 // Save the score when the timer reaches 0
 if (timer === 0) {
     saveScore();
-}
-
-//draw the scores
-function drawScoreBoard() {
-    push();
-    background(0, 255, 200);
-    textAlign(CENTER, CENTER);
-    textSize(20);
-    fill("#000000");
-    text("Press ESCAPE to go back", width / 2, height / 2 + 200);
-    textSize(50);
-    text("Scores", width / 2, height / 2 - 200);
-    textSize(30);
-    let scores = JSON.parse(localStorage.getItem('scores')) || [];
-    scores.sort((a, b) => b - a); // Sort scores in descending order
-    for (let i = 0; i < Math.min(scores.length, 10); i++) {
-        text(`${i + 1}. ${scores[i]}`, width / 2, height / 2 - 100 + i * 40);
-    }
-    pop();
 }
 
 /**
